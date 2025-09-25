@@ -1,2 +1,2 @@
 # DO-PE
-This a learning project to demonstrate Dev-ops capabilities and more.
+This is a learning project to demonstrate Dev-ops capabilities and more.
