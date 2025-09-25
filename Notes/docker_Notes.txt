@@ -1,0 +1,29 @@
+************************************** Docker commands *************************************
+  
+   1. docker -v   - version
+   2. docker      - all commands
+   3. docker pull <img-name>   /   docker pull <img-name:version>
+   4. docker images
+   5. docker run <image-name> 
+    // options: -d: detach mode] Default is attach mode
+    // options: --name : define a name
+    // options: -e : env variable
+    // options: --metwork : define which network to run on
+    // options:  docker run - p8080:3306 <img-name> [For port binding]
+   6. docker run -it <image-name>    - Interactive mode
+   7. docker ps -a    - Gives list of containers in their state
+   8. docker start <container-name/id> // start: Existing container restart     V/s     run: new container
+   9. docker stop <image-name>
+  10. docker rmi <image-name>
+  11. docker rm <container-name> // We need to delete container first to remove image
+  12. docker logs <container-name>
+  13. docker exec -it <container-id/bin/bash> // Run additional commands on running containers
+    // docker exec -it <container-id/bin/sh>
+  14. docker network ls
+  15. docker network create <name>
+  16. docker compose up -d // docker-compose.yml file is required in the current directory
+  17. netstat -ano | findstr :<port> // Check if anythingis running on our ports
+  18. docler compose down -v
+  
+  
+  
