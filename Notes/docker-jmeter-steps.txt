@@ -1,0 +1,108 @@
+Docker-Jmeter steps
+
+1. Run Docker UI application to start docker engine.
+2. docker ps // To check containers
+3. Go to directory where config file is present
+4. docker compose build //Looks at your docker-compose.yml file.
+    // For each service that has a build section (with a Dockerfile), it:
+    // Builds a Docker image.
+    // Tags it with the service name (and project name).
+    // If an image already exists, it rebuilds only if something changed (Docker uses cache).
+
+5. docker compose up -d
+  // We should see all 3 containers running by running docker ps
+
+
+
+🧪 JMeter + InfluxDB + Grafana + Docker Setup
+
+This project provides a complete performance testing stack with:
+    JMeter (runs tests inside Docker with plugins)
+    InfluxDB (stores JMeter metrics in real time)
+    Grafana (visualizes performance dashboards)
+    Windows batch wrapper (jmeterRun.bat) for easy test execution
+
+⚙️ Setup Instructions
+1️⃣ Build & start the stack
+docker compose up -d --build
+
+This will spin up:
+    InfluxDB → available at http://localhost:8087
+    Grafana → available at http://localhost:3001 (login: admin / Grafana@123)
+    JMeter → runs inside a container with mounted test & results directories
+
+2️⃣ Place your test files
+    Save .jmx test plans under tests/
+    Save plugin JARs under plugins/ (they will be copied into JMeter lib/ext)
+
+    Example:
+    tests/
+     └── sample_test.jmx
+    plugins/
+     └── jmeter-plugins-casutg-2.10.jar
+
+3️⃣ Run a test
+    Use the batch wrapper:
+    jmeterRun.bat sample_test.jmx
+
+    This will:
+        Run the JMeter test inside Docker
+        Save results to results/jtl/
+        Save logs to results/logs/
+        Generate HTML reports under results/reports/
+
+    File names are automatically timestamped:
+        results/jtl/dockerJMeterTest_2025-09-25_1.jtl
+        results/logs/dockerJMeterLog_2025-09-25_1.log
+        results/reports/dockerJMeterReport_2025-09-25_1/
+
+4️⃣ View real-time metrics
+
+Open Grafana: http://localhost:3001
+Login with:
+User: admin
+Password: Grafana@123
+
+Add InfluxDB data source:
+URL: http://influxdb:8086
+
+Database: jmeter (or whichever DB your JMeter Backend Listener writes to)
+Import dashboards (community JMeter dashboards are available from Grafana dashboards library).
+
+📄 File Details
+🔹 docker-compose.yml
+
+Starts InfluxDB, Grafana, and JMeter together.
+Creates a Docker network perfnet so containers can talk to each other.
+Mounts volumes for test scripts, results, and persistence.
+
+🔹 Dockerfile
+Builds a custom JMeter image (v5.6.3).
+Copies plugin JARs from plugins/ into JMeter lib/ext/.
+Keeps container alive (tail -f /dev/null) so you can exec into it.
+
+🔹 jmeterRun.bat
+Wrapper script for Windows.
+Accepts test plan filename (.jmx) as argument.
+Creates timestamped results/logs/reports directories.
+Executes JMeter test inside container and generates HTML report.
+
+Usage:
+jmeterRun.bat myTestPlan.jmx
+
+✅ Example Workflow
+
+Place your JMX test in tests/:
+tests/myTestPlan.jmx
+
+Run the stack:
+docker compose up -d --build
+
+Run the test:
+jmeterRun.bat myTestPlan.jmx
+
+View:
+
+HTML report → results/reports/dockerJMeterReport_<date>_<id>/index.html
+
+Grafana dashboard → http://localhost:3001
